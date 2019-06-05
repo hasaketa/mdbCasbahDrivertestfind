@@ -20,14 +20,21 @@ val collection = db("findtest")
       val coll = db("aggregationtest")
       coll.drop()
 
+      coll.insert( MongoDBObject("_id" -> 0, "name" -> "MongoDB", "type" -> "database",
+                             "count" -> 1, "info" -> MongoDBObject("x" -> 203, "y" -> 102)))
+
       val aggregationOptions = AggregationOptions(AggregationOptions.CURSOR)
 
       val startTime2 = System.currentTimeMillis()
-      System.out.println("Aggregation result: " + coll.aggregate(
+      
+      val results = coll.aggregate(
 	  List(
   MongoDBObject("$match" -> MongoDBObject("name" -> "MongoDB"))
 	), 
-       aggregationOptions )) 
+       aggregationOptions ) 
+     
+      for (result <- results) println(result)
+      
       val endTime2 = System.currentTimeMillis()
       System.out.println("Total execution time for aggregation command: " + (endTime2 - startTime2) + "ms" )
 
