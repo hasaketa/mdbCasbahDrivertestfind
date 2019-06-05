@@ -8,10 +8,11 @@ object CasbahTest {
 val collection = db("findtest")
       collection.drop()
 
-      collection.insert( MongoDBObject("hello" -> "world"))
+      collection.insert( MongoDBObject("_id" -> 0, "name" -> "MongoDB", "type" -> "database",
+                             "count" -> 1, "info" -> MongoDBObject("x" -> 203, "y" -> 102)))
 
       val startTime = System.currentTimeMillis()
-      System.out.println("Find result: " +  collection.findOne(MongoDBObject("hello" -> "world")))
+      System.out.println("Find result: " +  collection.findOne(MongoDBObject("name" -> "MongoDB")))
       val endTime = System.currentTimeMillis()
 
       System.out.println("Total execution time for find command: " + (endTime - startTime) + "ms")
@@ -19,32 +20,12 @@ val collection = db("findtest")
       val coll = db("aggregationtest")
       coll.drop()
 
-      coll += MongoDBObject("title" -> "Programming in Scala" ,
-                      "author" -> "Martin",
-                      "pageViews" ->  50,
-                      "tags" ->  ("scala", "functional", "JVM") ,
-                      "body" ->  "Test body by Martin")
-
-      coll += MongoDBObject("title" -> "Programming Clojure" ,
-                      "author" -> "Stuart",
-                      "pageViews" ->  35,
-                      "tags" ->  ("clojure", "functional", "JVM") ,
-                      "body" ->  "Test body by Stuart")
-
-      coll += MongoDBObject("title" -> "MongoDB: The Definitive Guide" ,
-                      "author" -> "Kristina",
-                      "pageViews" ->  90,
-                      "tags" ->  ("databases", "nosql", "future") ,
-                      "body" ->  "Test body by Kristina")
-
       val aggregationOptions = AggregationOptions(AggregationOptions.CURSOR)
 
       val startTime2 = System.currentTimeMillis()
       System.out.println("Aggregation result: " + coll.aggregate(
 	  List(
-  MongoDBObject("$project" -> MongoDBObject("author" -> 1, "tags" -> 1)),
-  MongoDBObject("$unwind" -> "$tags"),
-  MongoDBObject("$group" -> MongoDBObject("_id" -> "$tags", "authors" -> MongoDBObject("$addToSet" -> "$author")))
+  MongoDBObject("$match" -> MongoDBObject("name" -> "MongoDB"))
 	), 
        aggregationOptions )) 
       val endTime2 = System.currentTimeMillis()
